@@ -1,0 +1,83 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-900 text-white p-4">
+  <div id="login" class="max-w-md mx-auto bg-gray-800 p-6 rounded shadow">
+    <h2 class="text-xl mb-4">Admin Login</h2>
+    <input type="password" id="password" placeholder="Enter password" class="w-full p-2 rounded text-black mb-4 border border-black"/>
+    <button onclick="checkPassword()" class="bg-purple-600 text-white px-4 py-2 rounded w-full">Login</button>
+  </div>
+
+  <div id="adminPanel" class="hidden">
+    <h1 class="text-2xl mb-4">Orders</h1>
+    <table class="table-auto w-full text-sm bg-white text-black rounded shadow">
+      <thead>
+        <tr>
+          <th class="border px-2 py-1">Name</th>
+          <th class="border px-2 py-1">Surname</th>
+          <th class="border px-2 py-1">Phone</th>
+          <th class="border px-2 py-1">Wilaya</th>
+          <th class="border px-2 py-1">Address</th>
+          <th class="border px-2 py-1">Quantity</th>
+          <th class="border px-2 py-1">Product</th>
+        </tr>
+      </thead>
+      <tbody id="ordersTable"></tbody>
+    </table>
+  </div>
+
+  <script>
+    const correctPassword = "verison.2025";
+
+    function checkPassword() {
+      const input = document.getElementById("password").value;
+      if (input === correctPassword) {
+        localStorage.setItem("admin-auth", "true");
+        document.getElementById("login").classList.add("hidden");
+        document.getElementById("adminPanel").classList.remove("hidden");
+        loadOrders();
+      } else {
+        alert("Incorrect password");
+      }
+    }
+
+    function loadOrders() {
+      const orders = JSON.parse(localStorage.getItem("orders") || "[]");
+      const tbody = document.getElementById("ordersTable");
+      tbody.innerHTML = "";
+      orders.forEach(order => {
+        const row = `<tr>
+          <td class="border px-2 py-1">{order.first_name}</td>
+          <td class="border px-2 py-1">{order.last_name}</td>
+          <td class="border px-2 py-1">{order.phone}</td>
+          <td class="border px-2 py-1">{order.wilaya}</td>
+          <td class="border px-2 py-1">{order.address}</td>
+          <td class="border px-2 py-1">{order.quantity}</td>
+          <td class="border px-2 py-1">{order.product}</td>
+        </tr>`;
+        tbody.innerHTML += row;
+      });
+    }
+
+    window.onload = () => {
+      if (localStorage.getItem("admin-auth") === "true") {
+        document.getElementById("login").classList.add("hidden");
+        document.getElementById("adminPanel").classList.remove("hidden");
+        loadOrders();
+      } else {
+        localStorage.removeItem("admin-auth");
+      }
+    }
+
+    window.onbeforeunload = () => {
+      localStorage.removeItem("admin-auth");
+    }
+  </script>
+</body>
+</html>
